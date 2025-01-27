@@ -1,2 +1,2 @@
-# Description
-VPN Manager HTTP API written in C++
+# VPN Manager API CPP
+Stack: c++20, userver, postgres
