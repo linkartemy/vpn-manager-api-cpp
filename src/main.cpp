@@ -15,9 +15,9 @@ int main(int argc, char* argv[]) {
           .Append<userver::components::TestsuiteSupport>()
           .Append<userver::components::HttpClient>()
           .Append<userver::server::handlers::TestsControl>()
-          .Append<vpn_server::repositories::UserRepositoryComponent>();
+          .Append<vpn_manager::repositories::UserRepositoryComponent>();
 
-  vpn_server::AppendGetUserByUsername(component_list);
+  vpn_manager::AppendGetUserByUsername(component_list);
 
   return userver::utils::DaemonMain(argc, argv, component_list);
 }

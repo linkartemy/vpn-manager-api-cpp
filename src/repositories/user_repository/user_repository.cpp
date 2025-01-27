@@ -11,7 +11,7 @@
 #include <userver/storages/postgres/postgres_fwd.hpp>
 #include <userver/yaml_config/schema.hpp>
 
-namespace vpn_server::repositories {
+namespace vpn_manager::repositories {
 
 UserRepositoryComponent::UserRepositoryComponent(
     const userver::components::ComponentConfig& config,
@@ -62,4 +62,4 @@ std::string UserRepositoryComponent::GetUserByUsername(
   return result.AsOptionalSingleRow<std::string>().value_or("unknown");
 }
 
-}  // namespace vpn_server::repositories
+}  // namespace vpn_manager::repositories

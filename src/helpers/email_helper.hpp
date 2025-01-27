@@ -6,7 +6,7 @@
 #include <userver/components/component_list.hpp>
 #include <vector>
 
-namespace vpn_server {
+namespace vpn_manager {
 
 bool IsEmailValid(const std::string_view& email);
 

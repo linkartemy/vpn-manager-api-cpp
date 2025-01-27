@@ -5,7 +5,7 @@ services:
         container_name: service-postgres
         image: postgres:12
         environment:
-          - POSTGRES_DB=vpn_server_db_1
+          - POSTGRES_DB=vpn_manager_db_1
           - POSTGRES_USER=user
           - POSTGRES_PASSWORD=password
         ports:
@@ -16,22 +16,22 @@ services:
         networks:
           - postgres
 
-    vpn_server-container:
+    vpn_manager-container:
         image: ghcr.io/userver-framework/ubuntu-22.04-userver-pg:latest
         privileged: true
         environment:
-          - POSTGRES_DB=vpn_server_db_1
+          - POSTGRES_DB=vpn_manager_db_1
           - POSTGRES_USER=user
           - POSTGRES_PASSWORD=password
           - PREFIX=${PREFIX:-~/.local}
-          - CCACHE_DIR=/vpn_server/.ccache
+          - CCACHE_DIR=/vpn_manager/.ccache
           - CORES_DIR=/cores
         volumes:
-          - .:/vpn_server:rw
+          - .:/vpn_manager:rw
           - ${TC_CORES_DIR:-./.cores}:/cores:rw
         ports:
           - 8080:8080
-        working_dir: /vpn_server
+        working_dir: /vpn_manager
         entrypoint:
           - ./tests/run_as_user.sh
         depends_on:

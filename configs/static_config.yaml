@@ -26,7 +26,7 @@ components_manager:
                     overflow_behavior: discard  # Drop logs if the system is too busy to write them down.
 
         tracer:                              # Component that helps to trace execution times and requests in logs.
-            service-name: vpn_server         # "You know. You all know exactly who I am. Say my name. " (c)
+            service-name: vpn_manager         # "You know. You all know exactly who I am. Say my name. " (c)
 
         # Dynamic config options. Cache is disabled, updates are disabled.
         dynamic-config:

@@ -4,7 +4,7 @@
 #include <string_view>
 #include <vector>
 
-namespace vpn_server {
+namespace vpn_manager {
 
 bool IsEmailValid(const std::string_view& email) {
   static const std::regex pattern{
@@ -12,4 +12,4 @@ bool IsEmailValid(const std::string_view& email) {
   return std::regex_match(email.begin(), email.end(), pattern);
 }
 
-}  // namespace vpn_server
+}  // namespace vpn_manager

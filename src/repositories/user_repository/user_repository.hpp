@@ -6,11 +6,11 @@
 #include <userver/dynamic_config/source.hpp>
 #include <userver/storages/postgres/postgres_fwd.hpp>
 
-namespace vpn_server::repositories {
+namespace vpn_manager::repositories {
 class UserRepositoryComponent final
     : public userver::components::ComponentBase {
  public:
-  const char* const kUserTable = "vpn_server.user";
+  const char* const kUserTable = "vpn_manager.user";
 
   static constexpr std::string_view kName = "user-repository-component";
 
@@ -27,4 +27,4 @@ class UserRepositoryComponent final
   userver::storages::postgres::ClusterPtr pg_cluster_;
   userver::dynamic_config::Source config_;
 };
-}  // namespace vpn_server::repositories
+}  // namespace vpn_manager::repositories

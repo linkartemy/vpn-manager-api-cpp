@@ -1,3 +1,3 @@
-namespace vpn_server::constants::postgres {
+namespace vpn_manager::constants::postgres {
 const char* const kPostgresDBName = "postgres-db-1";
 }

@@ -5,7 +5,7 @@
 #include <userver/formats/json/value_builder.hpp>
 #include <vector>
 
-namespace vpn_server {
+namespace vpn_manager {
 class UserDto {
  public:
   std::string id;
@@ -43,4 +43,4 @@ inline std::string MakeJsonResponse(const std::vector<UserDto>& responses) {
   return ToStableString(array.ExtractValue());
 }
 
-}  // namespace vpn_server
+}  // namespace vpn_manager

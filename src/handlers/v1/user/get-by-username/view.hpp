@@ -5,9 +5,9 @@
 
 #include <userver/components/component_list.hpp>
 
-namespace vpn_server {
+namespace vpn_manager {
 
 void AppendGetUserByUsername(
     userver::components::ComponentList& component_list);
 
-}  // namespace vpn_server
+}  // namespace vpn_manager

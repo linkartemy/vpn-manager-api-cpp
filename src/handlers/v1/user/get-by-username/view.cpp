@@ -11,7 +11,7 @@
 #include <userver/storages/postgres/component.hpp>
 #include <userver/utils/assert.hpp>
 
-namespace vpn_server {
+namespace vpn_manager {
 
 namespace {
 
@@ -47,7 +47,7 @@ class GetUserByUsername final
     auto result = pg_cluster_->Execute(
         userver::storages::postgres::ClusterHostType::kMaster,
         "SELECT id, username, first_name, last_name, email, phone_number, "
-        "created_at FROM vpn_server.user "
+        "created_at FROM vpn_manager.user "
         "WHERE username = $1",
         id);
 
@@ -77,4 +77,4 @@ void AppendGetUserByUsername(
   component_list.Append<GetUserByUsername>();
 }
 
-}  // namespace vpn_server
+}  // namespace vpn_manager
