@@ -9,6 +9,7 @@ compile_commands.json
 !.vscode/cmake-variants.yaml
 !.vscode/README.md
 .cores/
+.devcontainer/
 .pgdata/
 cmake-build-*
 Testing/

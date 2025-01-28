@@ -56,8 +56,8 @@ components_manager:
             throttling_enabled: false
             url_trailing_slash: strict-match
 
-        handler-check:
-            path: /check
+        handler-v1-get-user-by-username:
+            path: /get-user-by-username/{username}
             method: GET
             task_processor: main-task-processor
 
@@ -68,13 +68,7 @@ components_manager:
             sync-start: false
             connlimit_mode: manual
 
-        item-repository-component:
-            task_processor: main-task-processor
-
         user-repository-component:
-            task_processor: main-task-processor
-
-        receipt-repository-component:
             task_processor: main-task-processor
 
         dns-client:

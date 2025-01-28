@@ -17,7 +17,7 @@ class UserDto {
   std::string created_at;
 
   UserDto(std::string id, std::string username, std::string first_name,
-          std::string last_name, std::string email, std::string phone_number)
+          std::string last_name, std::string email, std::string phone_number, std::string created_at)
       : id(std::move(id)),
         username(std::move(username)),
         first_name(std::move(first_name)),

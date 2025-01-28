@@ -2,7 +2,6 @@
 
 #include <fmt/format.h>
 
-#include <chrono>
 #include <userver/components/component_config.hpp>
 #include <userver/components/component_context.hpp>
 #include <userver/server/handlers/http_handler_base.hpp>
@@ -16,14 +15,6 @@ namespace vpn_manager {
 namespace {
 
 const std::string kLocationHeader = "Location";
-
-bool clear_expired_urls(userver::storages::postgres::Cluster* pg_cluster_) {
-  auto result = pg_cluster_->Execute(
-      userver::storages::postgres::ClusterHostType::kMaster,
-      "DELETE FROM url_shortener.urls WHERE expiration_date < $1",
-      userver::utils::datetime::Now());
-  return true;
-}
 
 class GetUserByUsername final
     : public userver::server::handlers::HttpHandlerBase {
@@ -49,7 +40,7 @@ class GetUserByUsername final
         "SELECT id, username, first_name, last_name, email, phone_number, "
         "created_at FROM vpn_manager.user "
         "WHERE username = $1",
-        id);
+        username);
 
     auto& response = request.GetHttpResponse();
     if (result.IsEmpty()) {

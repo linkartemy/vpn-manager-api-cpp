@@ -34,6 +34,7 @@ services:
         working_dir: /vpn_manager
         entrypoint:
           - ./tests/run_as_user.sh
+        # command: ["tail", "-f", "/dev/null"] # for debugging a container
         depends_on:
           - postgres
         networks:
