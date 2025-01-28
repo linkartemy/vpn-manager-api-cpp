@@ -57,8 +57,8 @@ components_manager:
             url_trailing_slash: strict-match
 
         handler-v1-get-user-by-username:
-            path: /get-user-by-username/{username}
-            method: GET
+            path: /v1/users/get-user-by-username
+            method: POST
             task_processor: main-task-processor
 
         postgres-db-1:

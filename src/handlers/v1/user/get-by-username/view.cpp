@@ -1,13 +1,20 @@
 #include "view.hpp"
+#include "../../../../models/user_dto.hpp"
+#include "../../../../helpers/uuid_parser.hpp"
 
 #include <fmt/format.h>
 
+#include <boost/uuid/string_generator.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <iostream>
 #include <userver/components/component_config.hpp>
 #include <userver/components/component_context.hpp>
+#include <userver/formats/json/serialize.hpp>
 #include <userver/server/handlers/http_handler_base.hpp>
 #include <userver/server/http/http_status.hpp>
 #include <userver/storages/postgres/cluster.hpp>
 #include <userver/storages/postgres/component.hpp>
+#include <userver/storages/postgres/io/user_types.hpp>
 #include <userver/utils/assert.hpp>
 
 namespace vpn_manager {
@@ -43,19 +50,36 @@ class GetUserByUsername final
         username);
 
     auto& response = request.GetHttpResponse();
-    if (result.IsEmpty()) {
-      response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
-      return {};
-    }
+    // if (result.IsEmpty()) {
+    //   response.SetStatus(userver::server::http::HttpStatus::kNotFound);
+    //   return R"({"error": "User not found"})";
+    // }
+
+    const auto& row = result[0];
+    // UserDto user{
+    //     row.As<boost::uuids::uuid>(),
+    //     row.As<std::string>(),
+    //     row.As<std::string>(),
+    //     row.As<std::string>(),
+    //     row.As<std::optional<std::string>>(),
+    //     row.As<std::optional<std::string>>(),
+    //     row.As<userver::storages::postgres::TimePointTz>(),
+    // };
+
+    boost::uuids::string_generator gen;
+    UserDto user {
+      gen("123e4567-e89b-12d3-a456-426614174000"),
+      "username",
+      "first_name",
+      "last_name",
+      "email",
+      "phone_number",
+      userver::storages::postgres::TimePointTz(),
+    };
 
     response.SetStatus(userver::server::http::HttpStatus::kOk);
 
-    return fmt::format(
-        R"({{"id": "{}", "username": "{}", "first_name": "{}", "last_name": "{}", "email": "{}", "phone_number": "{}", "created_at": "{}"}})",
-        result.AsSingleRow<std::string>(), result.AsSingleRow<std::string>(),
-        result.AsSingleRow<std::string>(), result.AsSingleRow<std::string>(),
-        result.AsSingleRow<std::string>(), result.AsSingleRow<std::string>(),
-        result.AsSingleRow<std::string>());
+    return userver::formats::json::ToString(user.ToJson().ExtractValue());
   }
 
   userver::storages::postgres::ClusterPtr pg_cluster_;
