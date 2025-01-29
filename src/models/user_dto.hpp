@@ -1,8 +1,5 @@
 #pragma once
 
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
-#include <boost/uuid/uuid_serialize.hpp>
 #include <iomanip>
 #include <optional>
 #include <sstream>
@@ -11,6 +8,9 @@
 #include <userver/storages/postgres/io/chrono.hpp>
 #include <userver/storages/postgres/io/user_types.hpp>
 #include <vector>
+#include <userver/utils/uuid4.hpp>
+#include <userver/utils/boost_uuid4.hpp>
+#include <userver/storages/postgres/io/uuid.hpp>
 
 namespace vpn_manager {
 
@@ -29,7 +29,6 @@ inline std::string FormatTimePoint(
 
 class UserDto {
  public:
-  // Fields
   boost::uuids::uuid id;
   std::string username;
   std::string first_name;
@@ -38,7 +37,6 @@ class UserDto {
   std::optional<std::string> phone_number;
   userver::storages::postgres::TimePointTz created_at;
 
-  // Constructor
   UserDto(boost::uuids::uuid id, std::string username, std::string first_name,
           std::string last_name, std::optional<std::string> email,
           std::optional<std::string> phone_number,
@@ -51,17 +49,15 @@ class UserDto {
         phone_number(std::move(phone_number)),
         created_at(std::move(created_at)) {}
 
-  // Defaulted Rule of Five
   UserDto(const UserDto&) = default;
   UserDto& operator=(const UserDto&) = default;
   UserDto(UserDto&&) = default;
   UserDto& operator=(UserDto&&) = default;
   ~UserDto() = default;
 
-  // JSON Serialization
   userver::formats::json::ValueBuilder ToJson() const {
     userver::formats::json::ValueBuilder obj;
-    obj["id"] = boost::uuids::to_string(id);
+    obj["id"] = fmt::to_string(id);
     obj["username"] = username;
     obj["first_name"] = first_name;
     obj["last_name"] = last_name;
@@ -72,7 +68,6 @@ class UserDto {
   }
 };
 
-// Function to create JSON response
 inline std::string MakeJsonResponse(const std::vector<UserDto>& users) {
   userver::formats::json::ValueBuilder array;
   for (const auto& user : users) {

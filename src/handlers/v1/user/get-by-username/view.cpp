@@ -1,6 +1,5 @@
 #include "view.hpp"
 #include "../../../../models/user_dto.hpp"
-#include "../../../../helpers/uuid_parser.hpp"
 
 #include <fmt/format.h>
 
@@ -16,6 +15,7 @@
 #include <userver/storages/postgres/component.hpp>
 #include <userver/storages/postgres/io/user_types.hpp>
 #include <userver/utils/assert.hpp>
+#include <userver/utils/uuid4.hpp>
 
 namespace vpn_manager {
 
@@ -68,7 +68,7 @@ class GetUserByUsername final
 
     boost::uuids::string_generator gen;
     UserDto user {
-      gen("123e4567-e89b-12d3-a456-426614174000"),
+      gen(userver::utils::generators::GenerateUuid()),
       "username",
       "first_name",
       "last_name",

@@ -93,8 +93,6 @@ add_library(${PROJECT_NAME}_objs OBJECT
         src/models/user_dto.hpp
         src/models/exception.hpp
 
-        src/helpers/uuid_parser.hpp
-        
         src/repositories/user_repository/user_repository.hpp
         src/repositories/user_repository/user_repository.cpp
 
