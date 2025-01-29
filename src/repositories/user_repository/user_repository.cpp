@@ -72,4 +72,19 @@ std::optional<UserDto> UserRepositoryComponent::GetUserByUsername(
   return UserDto{id, uname, first_name, last_name, email, phone, created_at};
 }
 
+boost::uuids::uuid UserRepositoryComponent::CreateUser(
+    std::string_view username, std::string_view first_name,
+    std::string_view last_name, std::optional<std::string> email,
+    std::optional<std::string> phone_number) const {
+  auto query = fmt::format(
+      "INSERT INTO {} (username, first_name, last_name, email, "
+      "phone_number) VALUES ($1, $2, $3, $4, $5) RETURNING id;",
+      kUserTable);
+  auto result = pg_cluster_->Execute(
+      userver::storages::postgres::ClusterHostType::kMaster, query, username,
+      first_name, last_name, email, phone_number);
+
+  return result.AsSingleRow<boost::uuids::uuid>();
+}
+
 }  // namespace vpn_manager::repositories

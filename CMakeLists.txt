@@ -98,6 +98,8 @@ add_library(${PROJECT_NAME}_objs OBJECT
 
         src/handlers/v1/user/get-by-username/view.hpp
         src/handlers/v1/user/get-by-username/view.cpp
+        src/handlers/v1/user/create-user/view.hpp
+        src/handlers/v1/user/create-user/view.cpp
 )
 target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver::postgresql)
 

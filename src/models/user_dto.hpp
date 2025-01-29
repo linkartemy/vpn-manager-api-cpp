@@ -48,6 +48,10 @@ class UserDto {
         email(std::move(email)),
         phone_number(std::move(phone_number)),
         created_at(std::move(created_at)) {}
+  
+  UserDto(std::string username, std::string first_name, std::string last_name,
+          std::optional<std::string> email,
+          std::optional<std::string> phone_number);
 
   UserDto(const UserDto&) = default;
   UserDto& operator=(const UserDto&) = default;

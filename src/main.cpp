@@ -6,6 +6,7 @@
 #include <userver/utils/daemon_run.hpp>
 
 #include "constants.hpp"
+#include "handlers/v1/user/create-user/view.hpp"
 #include "handlers/v1/user/get-by-username/view.hpp"
 #include "repositories/user_repository/user_repository.hpp"
 #include "third_party/userver/core/include/userver/clients/dns/component.hpp"
@@ -28,6 +29,7 @@ int main(int argc, char* argv[]) {
           .Append<vpn_manager::repositories::UserRepositoryComponent>();
 
   vpn_manager::AppendGetUserByUsername(component_list);
+  vpn_manager::AppendCreateUser(component_list);
 
   return userver::utils::DaemonMain(argc, argv, component_list);
 }

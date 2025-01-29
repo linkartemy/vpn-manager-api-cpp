@@ -4,10 +4,9 @@
 #include "../../../../repositories/user_repository/user_repository.hpp"
 
 #include <fmt/format.h>
-
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid.hpp>
-#include <iostream>
+
 #include <userver/components/component_config.hpp>
 #include <userver/components/component_context.hpp>
 #include <userver/formats/json/serialize.hpp>
@@ -22,8 +21,6 @@
 namespace vpn_manager {
 
 namespace {
-
-const std::string kLocationHeader = "Location";
 
 class GetUserByUsername final
     : public userver::server::handlers::HttpHandlerBase {
@@ -45,7 +42,8 @@ class GetUserByUsername final
       userver::server::request::RequestContext&) const override {
     auto& response = request.GetHttpResponse();
 
-    const auto json_body = userver::formats::json::FromString(request.RequestBody());
+    const auto json_body =
+        userver::formats::json::FromString(request.RequestBody());
     const auto& username = json_body["username"].As<std::string>();
 
     auto userOpt = user_repository_.GetUserByUsername(username);

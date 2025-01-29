@@ -16,4 +16,4 @@ async def test_get_user_by_username_success(service_client):
     )
     assert response.status == 200
     response_json = response.json()
-    print(response_json)
+    assert response_json['username'] == 'jdoe'

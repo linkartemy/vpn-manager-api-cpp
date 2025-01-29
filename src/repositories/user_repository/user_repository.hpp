@@ -25,6 +25,10 @@ class UserRepositoryComponent final
   std::string GetUserById(std::string_view user_id) const;
   std::optional<UserDto> GetUserByUsername(std::string_view username) const;
 
+  boost::uuids::uuid CreateUser(std::string_view username, std::string_view first_name,
+                  std::string_view last_name, std::optional<std::string> email,
+                  std::optional<std::string> phone_number) const;
+
  private:
   userver::storages::postgres::ClusterPtr pg_cluster_;
   userver::dynamic_config::Source config_;
