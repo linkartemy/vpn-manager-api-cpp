@@ -1,5 +1,6 @@
 #include "user_repository.hpp"
 #include "../../constants.hpp"
+#include "models/user_dto.hpp"
 
 #include <userver/components/component_config.hpp>
 #include <userver/components/component_context.hpp>
@@ -51,7 +52,7 @@ std::string UserRepositoryComponent::GetUserById(
   return result.AsOptionalSingleRow<std::string>().value_or("unknown");
 }
 
-std::string UserRepositoryComponent::GetUserByUsername(
+std::optional<UserDto> UserRepositoryComponent::GetUserByUsername(
     std::string_view username) const {
   auto query = fmt::format(
       "SELECT id, username, first_name, last_name, email, phone_number, "
@@ -59,7 +60,16 @@ std::string UserRepositoryComponent::GetUserByUsername(
       kUserTable);
   auto result = pg_cluster_->Execute(
       userver::storages::postgres::ClusterHostType::kMaster, query, username);
-  return result.AsOptionalSingleRow<std::string>().value_or("unknown");
+  if (result.IsEmpty()) {
+    return std::nullopt;
+  }
+  auto [id, uname, first_name, last_name, email, phone, created_at] =
+      result.AsSingleRow<
+          std::tuple<boost::uuids::uuid, std::string, std::string, std::string,
+                     std::optional<std::string>, std::optional<std::string>,
+                     userver::storages::postgres::TimePointTz>>(
+          userver::storages::postgres::kRowTag);
+  return UserDto{id, uname, first_name, last_name, email, phone, created_at};
 }
 
 }  // namespace vpn_manager::repositories

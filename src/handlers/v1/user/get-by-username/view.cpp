@@ -1,5 +1,7 @@
 #include "view.hpp"
+#include "../../../../constants.hpp"
 #include "../../../../models/user_dto.hpp"
+#include "../../../../repositories/user_repository/user_repository.hpp"
 
 #include <fmt/format.h>
 
@@ -32,50 +34,26 @@ class GetUserByUsername final
       const userver::components::ComponentConfig& config,
       const userver::components::ComponentContext& component_context)
       : HttpHandlerBase(config, component_context),
-        pg_cluster_(
-            component_context
-                .FindComponent<userver::components::Postgres>("postgres-db-1")
-                .GetCluster()) {}
+        pg_cluster_(component_context
+                        .FindComponent<userver::components::Postgres>(
+                            constants::postgres::kPostgresDBName)
+                        .GetCluster()),
+        user_repository_(config, component_context) {}
 
   std::string HandleRequestThrow(
       const userver::server::http::HttpRequest& request,
       userver::server::request::RequestContext&) const override {
-    const auto& username = request.GetPathArg("username");
-
-    auto result = pg_cluster_->Execute(
-        userver::storages::postgres::ClusterHostType::kMaster,
-        "SELECT id, username, first_name, last_name, email, phone_number, "
-        "created_at FROM vpn_manager.user "
-        "WHERE username = $1",
-        username);
-
     auto& response = request.GetHttpResponse();
-    // if (result.IsEmpty()) {
-    //   response.SetStatus(userver::server::http::HttpStatus::kNotFound);
-    //   return R"({"error": "User not found"})";
-    // }
 
-    const auto& row = result[0];
-    // UserDto user{
-    //     row.As<boost::uuids::uuid>(),
-    //     row.As<std::string>(),
-    //     row.As<std::string>(),
-    //     row.As<std::string>(),
-    //     row.As<std::optional<std::string>>(),
-    //     row.As<std::optional<std::string>>(),
-    //     row.As<userver::storages::postgres::TimePointTz>(),
-    // };
+    const auto json_body = userver::formats::json::FromString(request.RequestBody());
+    const auto& username = json_body["username"].As<std::string>();
 
-    boost::uuids::string_generator gen;
-    UserDto user {
-      gen(userver::utils::generators::GenerateUuid()),
-      "username",
-      "first_name",
-      "last_name",
-      "email",
-      "phone_number",
-      userver::storages::postgres::TimePointTz(),
-    };
+    auto userOpt = user_repository_.GetUserByUsername(username);
+    if (!userOpt.has_value()) {
+      response.SetStatus(userver::server::http::HttpStatus::kNotFound);
+      return R"({"error": "User not found"})";
+    }
+    auto user = userOpt.value();
 
     response.SetStatus(userver::server::http::HttpStatus::kOk);
 
@@ -83,6 +61,7 @@ class GetUserByUsername final
   }
 
   userver::storages::postgres::ClusterPtr pg_cluster_;
+  repositories::UserRepositoryComponent user_repository_;
 };
 
 }  // namespace

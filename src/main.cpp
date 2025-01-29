@@ -5,6 +5,7 @@
 #include <userver/testsuite/testsuite_support.hpp>
 #include <userver/utils/daemon_run.hpp>
 
+#include "constants.hpp"
 #include "handlers/v1/user/get-by-username/view.hpp"
 #include "repositories/user_repository/user_repository.hpp"
 #include "third_party/userver/core/include/userver/clients/dns/component.hpp"
@@ -18,7 +19,8 @@ int main(int argc, char* argv[]) {
   auto component_list =
       userver::components::MinimalServerComponentList()
           .Append<userver::server::handlers::Ping>()
-          .Append<userver::components::Postgres>("postgres-db-1")
+          .Append<userver::components::Postgres>(
+              vpn_manager::constants::postgres::kPostgresDBName)
           .Append<userver::components::TestsuiteSupport>()
           .Append<userver::server::handlers::TestsControl>()
           .Append<userver::components::HttpClient>()
