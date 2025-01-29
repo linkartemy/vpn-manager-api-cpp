@@ -3,8 +3,12 @@ import pytest
 from testsuite.databases import pgsql
 
 
+CREATE_USER_PATH = '/v1/users/create-user'
+
 # Start the tests via `make test-debug` or `make test-release`
 # Tests return null ----------------------------------------------------
+
+
 @pytest.mark.pgsql('db-1', files=['initial_data.sql'])
 async def test_create_user_success(service_client):
     data = {
@@ -15,7 +19,7 @@ async def test_create_user_success(service_client):
         'phone_number': '+12345678901',
     }
     response = await service_client.post(
-        '/v1/users/create-user',
+        CREATE_USER_PATH,
         json=data
     )
     assert response.status == 200
@@ -33,7 +37,7 @@ async def test_create_user_duplicate_username(service_client):
         'phone_number': '+12345678901',
     }
     response = await service_client.post(
-        '/v1/users/create-user',
+        CREATE_USER_PATH,
         json=data
     )
     assert response.status == 409
@@ -48,7 +52,7 @@ async def test_create_user_missing_email_success(service_client):
         'phone_number': '+12345678901',
     }
     response = await service_client.post(
-        '/v1/users/create-user',
+        CREATE_USER_PATH,
         json=data
     )
     assert response.status == 200
@@ -65,7 +69,7 @@ async def test_create_user_missing_phone_number_success(service_client):
         'email': 'email@email.com',
     }
     response = await service_client.post(
-        '/v1/users/create-user',
+        CREATE_USER_PATH,
         json=data
     )
     assert response.status == 200
@@ -82,7 +86,7 @@ async def test_create_user_missing_first_name_failure(service_client):
         'phone_number': '+12345678901',
     }
     response = await service_client.post(
-        '/v1/users/create-user',
+        CREATE_USER_PATH,
         json=data
     )
     assert response.status == 400
@@ -97,7 +101,7 @@ async def test_create_user_missing_last_name_failure(service_client):
         'phone_number': '+12345678901',
     }
     response = await service_client.post(
-        '/v1/users/create-user',
+        CREATE_USER_PATH,
         json=data
     )
     assert response.status == 400
@@ -112,7 +116,7 @@ async def test_create_user_missing_username_failure(service_client):
         'phone_number': '+12345678901',
     }
     response = await service_client.post(
-        '/v1/users/create-user',
+        CREATE_USER_PATH,
         json=data
     )
     assert response.status == 400
