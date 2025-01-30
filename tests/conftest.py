@@ -51,7 +51,7 @@ def initial_data_path(service_source_dir):
     """Path for find files with data"""
     return [
         service_source_dir / 'postgresql/data',
-        ]
+    ]
 
 
 @pytest.fixture(scope='session')

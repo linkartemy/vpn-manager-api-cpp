@@ -92,12 +92,14 @@ add_library(${PROJECT_NAME}_objs OBJECT
 
         src/models/user_dto.hpp
         src/models/exception.hpp
-        
+
         src/repositories/user_repository/user_repository.hpp
         src/repositories/user_repository/user_repository.cpp
 
         src/handlers/v1/user/get-by-username/view.hpp
         src/handlers/v1/user/get-by-username/view.cpp
+        src/handlers/v1/user/create-user/view.hpp
+        src/handlers/v1/user/create-user/view.cpp
 )
 target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver::postgresql)
 
@@ -110,6 +112,8 @@ target_include_directories(${PROJECT_NAME}
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # Unit Tests
 add_executable(${PROJECT_NAME}_unittest)
