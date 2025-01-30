@@ -7,25 +7,13 @@
 #include <userver/formats/json/value_builder.hpp>
 #include <userver/storages/postgres/io/chrono.hpp>
 #include <userver/storages/postgres/io/user_types.hpp>
-#include <vector>
-#include <userver/utils/uuid4.hpp>
-#include <userver/utils/boost_uuid4.hpp>
 #include <userver/storages/postgres/io/uuid.hpp>
+#include <userver/utils/boost_uuid4.hpp>
+#include <userver/utils/uuid4.hpp>
+#include <vector>
+#include "helpers/datetime_helper.hpp"
 
 namespace vpn_manager {
-
-inline std::string FormatTimePoint(
-    const userver::storages::postgres::TimePointTz& time_point) {
-  auto sys_time = time_point.GetUnderlying();
-  std::time_t time_t_value = std::chrono::system_clock::to_time_t(sys_time);
-  std::tm tm_value = *std::gmtime(&time_t_value);
-
-  // Format as ISO 8601 (YYYY-MM-DDTHH:MM:SSZ)
-  std::ostringstream oss;
-  oss << std::put_time(&tm_value, "%Y-%m-%dT%H:%M:%SZ");
-
-  return oss.str();
-}
 
 class UserDto {
  public:
@@ -48,10 +36,6 @@ class UserDto {
         email(std::move(email)),
         phone_number(std::move(phone_number)),
         created_at(std::move(created_at)) {}
-  
-  UserDto(std::string username, std::string first_name, std::string last_name,
-          std::optional<std::string> email,
-          std::optional<std::string> phone_number);
 
   UserDto(const UserDto&) = default;
   UserDto& operator=(const UserDto&) = default;

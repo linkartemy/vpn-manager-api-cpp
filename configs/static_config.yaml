@@ -64,6 +64,11 @@ components_manager:
             path: /v1/users/create-user
             method: POST
             task_processor: main-task-processor
+        
+        handler-v1-create-key:
+            path: /v1/keys/create-key
+            method: POST
+            task_processor: main-task-processor
 
         postgres-db-1:
             dbconnection: $dbconnection
@@ -73,6 +78,8 @@ components_manager:
             connlimit_mode: manual
 
         user-repository-component:
+            task_processor: main-task-processor
+        key-repository-component:
             task_processor: main-task-processor
 
         dns-client:

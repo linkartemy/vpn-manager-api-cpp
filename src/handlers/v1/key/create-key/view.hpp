@@ -8,7 +8,6 @@
 
 namespace vpn_manager {
 
-void AppendCreateUser(
-    userver::components::ComponentList& component_list);
+void AppendCreateKey(userver::components::ComponentList& component_list);
 
 }  // namespace vpn_manager

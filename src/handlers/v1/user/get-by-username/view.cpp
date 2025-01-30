@@ -1,5 +1,6 @@
 #include "view.hpp"
 #include "../../../../constants.hpp"
+#include "../../../../models/response.hpp"
 #include "../../../../models/user_dto.hpp"
 #include "../../../../repositories/user_repository/user_repository.hpp"
 
@@ -49,17 +50,22 @@ class GetUserByUsername final
     auto userOpt = user_repository_.GetUserByUsername(username);
     if (!userOpt.has_value()) {
       response.SetStatus(userver::server::http::HttpStatus::kNotFound);
-      return R"({"error": "User not found"})";
+      return response::ErrorResponse(kUserNotFound).ToJson();
     }
     auto user = userOpt.value();
 
     response.SetStatus(userver::server::http::HttpStatus::kOk);
 
-    return userver::formats::json::ToString(user.ToJson().ExtractValue());
+    return response::Response(
+               userver::formats::json::ToString(user.ToJson().ExtractValue()))
+        .ToJson();
   }
 
   userver::storages::postgres::ClusterPtr pg_cluster_;
   repositories::UserRepositoryComponent user_repository_;
+
+ private:
+  inline static constexpr std::string_view kUserNotFound = "User not found";
 };
 
 }  // namespace
