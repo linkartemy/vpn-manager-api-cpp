@@ -17,7 +17,6 @@ Testing/
 Makefile.local
 .vscode/
 config_vars*
-configs/
 .pytest_cache
 *.pyc
 *.pyo
