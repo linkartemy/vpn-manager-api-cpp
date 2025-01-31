@@ -16,6 +16,7 @@
 #include <userver/server/http/http_status.hpp>
 #include <userver/storages/postgres/cluster.hpp>
 #include <userver/storages/postgres/component.hpp>
+#include <userver/storages/postgres/exceptions.hpp>
 #include <userver/storages/postgres/io/user_types.hpp>
 #include <userver/utils/assert.hpp>
 #include <userver/utils/boost_uuid4.hpp>
@@ -53,11 +54,21 @@ class CreateKey final : public userver::server::handlers::HttpHandlerBase {
     }
 
     boost::uuids::uuid user_id;
-    std::string name;
-    std::string key;
     try {
       user_id = userver::utils::BoostUuidFromString(
           json_body["user_id"].As<std::string>());
+    } catch (const std::exception& e) {
+      LOG_ERROR() << "CreateKey: Invalid user_id: " << e.what();
+      response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
+      return response::ErrorResponse(kInvalidUserId).ToJson();
+    } catch (...) {
+      LOG_ERROR() << "CreateKey: Invalid user_id";
+      response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
+      return response::ErrorResponse(kInvalidUserId).ToJson();
+    }
+    std::string name;
+    std::string key;
+    try {
       name = json_body["name"].As<std::string>();
       key = json_body["key"].As<std::string>();
     } catch (const std::exception& e) {
@@ -76,21 +87,26 @@ class CreateKey final : public userver::server::handlers::HttpHandlerBase {
     try {
       key_id = key_repository_.CreateKey(user_id, name, key);
     } catch (const userver::storages::postgres::UniqueViolation& e) {
-      LOG_ERROR() << "CreateUser: Unique constraint violation: " << e.what();
+      LOG_ERROR() << "CreateKey: Unique constraint violation: " << e.what();
       response.SetStatus(userver::server::http::HttpStatus::kConflict);
       return response::ErrorResponse(kKeyWithSuchNameAlreadyExists).ToJson();
+    } catch (const userver::storages::postgres::ForeignKeyViolation& e) {
+      LOG_ERROR() << "CreateKey: Foreign key constraint violation: "
+                  << e.what();
+      response.SetStatus(userver::server::http::HttpStatus::kNotFound);
+      return response::ErrorResponse(kUserDoesNotExist).ToJson();
     } catch (const userver::storages::postgres::ClusterError& e) {
-      LOG_ERROR() << "CreateUser: Database error: " << e.what();
+      LOG_ERROR() << "CreateKey: Database error: " << e.what();
       response.SetStatus(
           userver::server::http::HttpStatus::kInternalServerError);
       return response::ErrorResponse(kUnknownError).ToJson();
     } catch (const std::exception& e) {
-      LOG_ERROR() << "CreateUser: Unexpected error: " << e.what();
+      LOG_ERROR() << "CreateKey: Unexpected error: " << e.what();
       response.SetStatus(
           userver::server::http::HttpStatus::kInternalServerError);
       return response::ErrorResponse(kUnknownError).ToJson();
     } catch (...) {
-      LOG_ERROR() << "CreateUser: Unexpected error";
+      LOG_ERROR() << "CreateKey: Unexpected error";
       response.SetStatus(
           userver::server::http::HttpStatus::kInternalServerError);
       return response::ErrorResponse(kUnknownError).ToJson();
@@ -110,6 +126,9 @@ class CreateKey final : public userver::server::handlers::HttpHandlerBase {
       "Missing required fields";
   inline static constexpr std::string_view kKeyWithSuchNameAlreadyExists =
       "Key with such name already exists";
+  inline static constexpr std::string_view kInvalidUserId = "Invalid User ID";
+  inline static constexpr std::string_view kUserDoesNotExist =
+      "User does not exist";
   inline static constexpr std::string_view kUnknownError = "Unknown error";
 };
 

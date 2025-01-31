@@ -84,7 +84,7 @@ boost::uuids::uuid KeyRepositoryComponent::CreateKey(
     boost::uuids::uuid user_id, std::string_view name,
     std::string_view key) const {
   auto query = fmt::format(
-      "INSERT INTO {} (user_id, name, key) VALUES ($1, $2, $3, $4, $5) "
+      "INSERT INTO {} (user_id, name, key) VALUES ($1, $2, $3) "
       "RETURNING id;",
       kKeyTable);
   auto result = pg_cluster_->Execute(
