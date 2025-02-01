@@ -2,5 +2,5 @@
 #include <string_view>
 
 namespace vpn_manager {
-bool IsEmailValid(const std::string_view email);
+bool IsPhoneNumberValid(const std::string_view phone);
 }  // namespace vpn_manager

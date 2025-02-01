@@ -1,8 +1,8 @@
 #include "view.hpp"
-#include "../../../../constants.hpp"
-#include "../../../../models/response.hpp"
-#include "../../../../models/user_dto.hpp"
-#include "../../../../repositories/user_repository/user_repository.hpp"
+#include "constants.hpp"
+#include "models/response.hpp"
+#include "models/user_dto.hpp"
+#include "repositories/user_repository/user_repository.hpp"
 
 #include <fmt/format.h>
 #include <boost/uuid/string_generator.hpp>

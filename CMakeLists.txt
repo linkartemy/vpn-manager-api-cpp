@@ -90,6 +90,10 @@ userver_setup_environment()
 add_library(${PROJECT_NAME}_objs OBJECT
   src/constants.hpp
 
+  src/helpers/email_helper.hpp
+  src/helpers/email_helper.cpp
+  src/helpers/phone_helper.hpp
+  src/helpers/phone_helper.cpp
   src/helpers/datetime_helper.hpp
   src/helpers/datetime_helper.cpp
   src/helpers/string_convertible_checker.hpp

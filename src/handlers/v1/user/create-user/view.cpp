@@ -1,13 +1,16 @@
 #include "view.hpp"
-#include "../../../../constants.hpp"
-#include "../../../../models/user_dto.hpp"
-#include "../../../../repositories/user_repository/user_repository.hpp"
+#include "constants.hpp"
+#include "helpers/email_helper.hpp"
+#include "helpers/phone_helper.hpp"
 #include "models/response.hpp"
+#include "models/user_dto.hpp"
+#include "repositories/user_repository/user_repository.hpp"
 
 #include <fmt/format.h>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid.hpp>
 
+#include <optional>
 #include <userver/components/component_config.hpp>
 #include <userver/components/component_context.hpp>
 #include <userver/formats/json/serialize.hpp>
@@ -60,11 +63,19 @@ class CreateUser final : public userver::server::handlers::HttpHandlerBase {
 
     if (json_body.HasMember("email") && !json_body["email"].IsNull()) {
       email = json_body["email"].As<std::string>();
+      if (!IsEmailValid(email.value())) {
+        response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
+        return response::ErrorResponse(kInvalidEmail).ToJson();
+      }
     }
 
     if (json_body.HasMember("phone_number") &&
         !json_body["phone_number"].IsNull()) {
       phone_number = json_body["phone_number"].As<std::string>();
+      if (!IsPhoneNumberValid(phone_number.value())) {
+        response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
+        return response::ErrorResponse(kInvalidPhoneNumber).ToJson();
+      }
     }
 
     boost::uuids::uuid user_id;
@@ -94,6 +105,9 @@ class CreateUser final : public userver::server::handlers::HttpHandlerBase {
  private:
   inline static constexpr std::string_view kMissingFields = "Missing fields";
   inline static constexpr std::string_view kUsernameExists = "Username exists";
+  inline static constexpr std::string_view kInvalidEmail = "Invalid email";
+  inline static constexpr std::string_view kInvalidPhoneNumber =
+      "Invalid phone number";
   inline static constexpr std::string_view kUnknownError = "Unknown error";
 };
 
