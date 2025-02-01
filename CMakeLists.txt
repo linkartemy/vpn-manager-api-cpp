@@ -109,6 +109,10 @@ add_library(${PROJECT_NAME}_objs OBJECT
 
   src/handlers/v1/key/create-key/view.hpp
   src/handlers/v1/key/create-key/view.cpp
+  src/handlers/v1/key/get-by-id/view.hpp
+  src/handlers/v1/key/get-by-id/view.cpp
+  src/handlers/v1/key/get-by-name/view.hpp
+  src/handlers/v1/key/get-by-name/view.cpp
 )
 target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver::postgresql)
 

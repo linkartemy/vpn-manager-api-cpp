@@ -1,7 +1,5 @@
 import pytest
 
-from testsuite.databases import pgsql
-
 
 CREATE_KEY_PATH = '/v1/keys/create-key'
 

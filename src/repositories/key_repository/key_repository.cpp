@@ -3,6 +3,7 @@
 #include "models/key_dto.hpp"
 #include "models/user_dto.hpp"
 
+#include <boost/uuid/uuid.hpp>
 #include <userver/components/component_config.hpp>
 #include <userver/components/component_context.hpp>
 #include <userver/dynamic_config/snapshot.hpp>
@@ -41,7 +42,7 @@ bool KeyRepositoryComponent::KeyExistsByName(std::string_view name) const {
 }
 
 std::optional<KeyDto> KeyRepositoryComponent::GetKeyById(
-    std::string_view key_id) const {
+    boost::uuids::uuid key_id) const {
   auto query = fmt::format(
       "SELECT id, user_id, name, key, created_at FROM {} WHERE id = $1;",
       kKeyTable);

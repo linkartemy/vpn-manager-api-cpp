@@ -69,6 +69,14 @@ components_manager:
             path: /v1/keys/create-key
             method: POST
             task_processor: main-task-processor
+        handler-v1-get-key-by-id:
+            path: /v1/keys/get-key-by-id
+            method: POST
+            task_processor: main-task-processor
+        handler-v1-get-key-by-name:
+            path: /v1/keys/get-key-by-name
+            method: POST
+            task_processor: main-task-processor
 
         postgres-db-1:
             dbconnection: $dbconnection

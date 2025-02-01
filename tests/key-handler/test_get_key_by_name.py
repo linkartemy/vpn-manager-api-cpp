@@ -1,38 +1,37 @@
 import pytest
 
 
-GET_USER_BY_USERNAME_PATH = '/v1/users/get-user-by-username'
+GET_KEY_BY_NAME_PATH = '/v1/keys/get-key-by-name'
 
 # Start the tests via `make test-debug` or `make test-release`
 # Tests return null ----------------------------------------------------
 
 
 @pytest.mark.pgsql('db-1', files=['initial_data.sql'])
-async def test_get_user_by_username_success(service_client):
+async def test_get_key_by_name_success(service_client):
     data = {
-        'username': 'jdoe'
+        'name': 'Home WiFi'
     }
     response = await service_client.post(
-        GET_USER_BY_USERNAME_PATH,
+        GET_KEY_BY_NAME_PATH,
         json=data
     )
     assert response.status == 200
     response_data = response.json()["data"]
-    assert response_data['username'] == 'jdoe'
+    assert response_data['name'] == 'Home WiFi'
     assert 'id' in response_data
-    assert 'first_name' in response_data
-    assert 'last_name' in response_data
-    assert 'email' in response_data
-    assert 'phone_number' in response_data
+    assert 'user_id' in response_data
+    assert 'key' in response_data
+    assert 'created_at' in response_data
 
 
 @pytest.mark.pgsql('db-1', files=['initial_data.sql'])
-async def test_get_user_by_username_not_found(service_client):
+async def test_get_key_by_name_not_found(service_client):
     data = {
-        'username': 'notfound'
+        'name': 'name'
     }
     response = await service_client.post(
-        GET_USER_BY_USERNAME_PATH,
+        GET_KEY_BY_NAME_PATH,
         json=data
     )
     assert response.status == 404

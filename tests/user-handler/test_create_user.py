@@ -1,7 +1,5 @@
 import pytest
 
-from testsuite.databases import pgsql
-
 
 CREATE_USER_PATH = '/v1/users/create-user'
 

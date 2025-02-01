@@ -6,10 +6,10 @@ VALUES
     ('01234567-89ab-cdef-0123-456789abcdef', 'cclark', 'Clark', 'Kent', 'clark.kent@example.com', '789-123-4567'),
     ('fedcba98-7654-3210-fedc-ba9876543210', 'ddiana', 'Diana', 'Prince', 'diana.prince@example.com', '321-654-9870');
 
-INSERT INTO vpn_manager.key (user_id, name, key)
+INSERT INTO vpn_manager.key (id, user_id, name, key)
 VALUES
-    ((SELECT id FROM vpn_manager.user WHERE username = 'jdoe'), 'Home WiFi', 'abc123key'),
-    ((SELECT id FROM vpn_manager.user WHERE username = 'asmith'), 'Work VPN', 'xyz456key'),
-    ((SELECT id FROM vpn_manager.user WHERE username = 'bwayne'), 'Batcave VPN', 'bat789key'),
-    ((SELECT id FROM vpn_manager.user WHERE username = 'cclark'), 'Fortress VPN', 'krypton101key'),
-    ((SELECT id FROM vpn_manager.user WHERE username = 'ddiana'), 'Amazon VPN', 'wonder102key');
+    ('1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d', (SELECT id FROM vpn_manager.user WHERE username = 'jdoe'), 'Home WiFi', 'abc123key'),
+    ('2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e', (SELECT id FROM vpn_manager.user WHERE username = 'asmith'), 'Work VPN', 'xyz456key'),
+    ('3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f', (SELECT id FROM vpn_manager.user WHERE username = 'bwayne'), 'Batcave VPN', 'bat789key'),
+    ('4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9f', (SELECT id FROM vpn_manager.user WHERE username = 'cclark'), 'Fortress VPN', 'krypton101key'),
+    ('5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9f0a', (SELECT id FROM vpn_manager.user WHERE username = 'ddiana'), 'Amazon VPN', 'wonder102key');

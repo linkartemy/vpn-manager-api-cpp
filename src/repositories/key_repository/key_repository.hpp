@@ -23,7 +23,7 @@ class KeyRepositoryComponent final : public userver::components::ComponentBase {
   bool KeyExistsByUserId(std::string_view user_id) const;
   bool KeyExistsByName(std::string_view name) const;
 
-  std::optional<KeyDto> GetKeyById(std::string_view key_id) const;
+  std::optional<KeyDto> GetKeyById(boost::uuids::uuid key_id) const;
   std::optional<KeyDto> GetKeyByName(std::string_view name) const;
 
   boost::uuids::uuid CreateKey(boost::uuids::uuid user_id,
