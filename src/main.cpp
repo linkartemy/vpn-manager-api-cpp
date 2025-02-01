@@ -6,9 +6,16 @@
 #include <userver/utils/daemon_run.hpp>
 
 #include "constants.hpp"
+
+#include "handlers/v1/key/create-key/view.hpp"
+#include "handlers/v1/key/get-by-id/view.hpp"
+#include "handlers/v1/key/get-by-name/view.hpp"
 #include "handlers/v1/user/create-user/view.hpp"
 #include "handlers/v1/user/get-by-username/view.hpp"
+
+#include "repositories/key_repository/key_repository.hpp"
 #include "repositories/user_repository/user_repository.hpp"
+
 #include "third_party/userver/core/include/userver/clients/dns/component.hpp"
 #include "third_party/userver/core/include/userver/dynamic_config/client/component.hpp"
 #include "third_party/userver/core/include/userver/dynamic_config/updater/component.hpp"
@@ -26,10 +33,14 @@ int main(int argc, char* argv[]) {
           .Append<userver::server::handlers::TestsControl>()
           .Append<userver::components::HttpClient>()
           .Append<userver::clients::dns::Component>()
-          .Append<vpn_manager::repositories::UserRepositoryComponent>();
+          .Append<vpn_manager::repositories::UserRepositoryComponent>()
+          .Append<vpn_manager::repositories::KeyRepositoryComponent>();
 
   vpn_manager::AppendGetUserByUsername(component_list);
   vpn_manager::AppendCreateUser(component_list);
+  vpn_manager::AppendCreateKey(component_list);
+  vpn_manager::AppendGetKeyById(component_list);
+  vpn_manager::AppendGetKeyByName(component_list);
 
   return userver::utils::DaemonMain(argc, argv, component_list);
 }

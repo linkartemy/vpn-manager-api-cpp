@@ -17,7 +17,15 @@ CREATE TABLE IF NOT EXISTS vpn_manager.user (
 CREATE TABLE IF NOT EXISTS vpn_manager.key (
     id UUID DEFAULT uuid_generate_v4 () PRIMARY KEY,
     user_id UUID REFERENCES vpn_manager.user (id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
-    key VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    key VARCHAR(255) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS vpn_manager.key_subscription (
+    id UUID DEFAULT uuid_generate_v4 () PRIMARY KEY,
+    key_id UUID REFERENCES vpn_manager.key (id) ON DELETE CASCADE,
+    start_date TIMESTAMP NOT NULL,
+    end_date TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

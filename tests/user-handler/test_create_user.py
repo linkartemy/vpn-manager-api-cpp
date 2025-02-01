@@ -1,7 +1,5 @@
 import pytest
 
-from testsuite.databases import pgsql
-
 
 CREATE_USER_PATH = '/v1/users/create-user'
 
@@ -24,7 +22,7 @@ async def test_create_user_success(service_client):
     )
     assert response.status == 200
     response_json = response.json()
-    assert 'id' in response_json
+    assert 'id' in response_json["data"]
 
 
 @pytest.mark.pgsql('db-1', files=['initial_data.sql'])
@@ -57,7 +55,7 @@ async def test_create_user_missing_email_success(service_client):
     )
     assert response.status == 200
     response_json = response.json()
-    assert 'id' in response_json
+    assert 'id' in response_json["data"]
 
 
 @pytest.mark.pgsql('db-1', files=['initial_data.sql'])
@@ -74,7 +72,7 @@ async def test_create_user_missing_phone_number_success(service_client):
     )
     assert response.status == 200
     response_json = response.json()
-    assert 'id' in response_json
+    assert 'id' in response_json["data"]
 
 
 @pytest.mark.pgsql('db-1', files=['initial_data.sql'])

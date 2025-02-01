@@ -2,6 +2,7 @@
 #include "../../../../constants.hpp"
 #include "../../../../models/user_dto.hpp"
 #include "../../../../repositories/user_repository/user_repository.hpp"
+#include "models/response.hpp"
 
 #include <fmt/format.h>
 #include <boost/uuid/string_generator.hpp>
@@ -47,7 +48,7 @@ class CreateUser final : public userver::server::handlers::HttpHandlerBase {
         !json_body.HasMember("first_name") ||
         !json_body.HasMember("last_name")) {
       response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
-      return R"({"error": "Missing required fields"})";
+      return response::ErrorResponse(kMissingFields).ToJson();
     }
 
     const auto& username = json_body["username"].As<std::string>();
@@ -73,31 +74,27 @@ class CreateUser final : public userver::server::handlers::HttpHandlerBase {
     } catch (const userver::storages::postgres::UniqueViolation& e) {
       LOG_ERROR() << "CreateUser: Unique constraint violation: " << e.what();
       response.SetStatus(userver::server::http::HttpStatus::kConflict);
-      return R"({"error": "Username already exists"})";
-    } catch (const userver::storages::postgres::ClusterError& e) {
-      LOG_ERROR() << "CreateUser: Database error: " << e.what();
-      response.SetStatus(
-          userver::server::http::HttpStatus::kInternalServerError);
-      return R"({"error": "Database error"})";
+      return response::ErrorResponse(kUsernameExists).ToJson();
     } catch (const std::exception& e) {
       LOG_ERROR() << "CreateUser: Unexpected error: " << e.what();
       response.SetStatus(
           userver::server::http::HttpStatus::kInternalServerError);
-      return R"({"error": "Unexpected error"})";
-    } catch (...) {
-      LOG_ERROR() << "CreateUser: Unexpected error";
-      response.SetStatus(
-          userver::server::http::HttpStatus::kInternalServerError);
-      return R"({"error": "Unexpected error"})";
+      return response::ErrorResponse(kUnknownError).ToJson();
     }
 
     response.SetStatus(userver::server::http::HttpStatus::kOk);
 
-    return fmt::format(R"({{"id": "{}"}})", user_id);
+    return response::Response(fmt::format(R"({{"id": "{}"}})", user_id))
+        .ToJson();
   }
 
   userver::storages::postgres::ClusterPtr pg_cluster_;
   repositories::UserRepositoryComponent user_repository_;
+
+ private:
+  inline static constexpr std::string_view kMissingFields = "Missing fields";
+  inline static constexpr std::string_view kUsernameExists = "Username exists";
+  inline static constexpr std::string_view kUnknownError = "Unknown error";
 };
 
 }  // namespace

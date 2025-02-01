@@ -67,39 +67,52 @@ project(vpn_manager CXX)
 
 # Adding userver dependency
 find_package(userver COMPONENTS core postgresql REQUIRED)
-if(NOT userver_FOUND)  # Fallback to subdirectory usage
-    # Enable userver libraries that are needed in this project
-    set(USERVER_FEATURE_POSTGRESQL ON CACHE BOOL "" FORCE)
+if(NOT userver_FOUND) # Fallback to subdirectory usage
+  # Enable userver libraries that are needed in this project
+  set(USERVER_FEATURE_POSTGRESQL ON CACHE BOOL "" FORCE)
 
-    # Compatibility mode: some systems don't support these features
-    set(USERVER_FEATURE_CRYPTOPP_BLAKE2 OFF CACHE BOOL "" FORCE)
-    set(USERVER_FEATURE_GRPC_CHANNELZ OFF CACHE BOOL "" FORCE)
-    set(USERVER_FEATURE_REDIS_HI_MALLOC ON CACHE BOOL "" FORCE)
+  # Compatibility mode: some systems don't support these features
+  set(USERVER_FEATURE_CRYPTOPP_BLAKE2 OFF CACHE BOOL "" FORCE)
+  set(USERVER_FEATURE_GRPC_CHANNELZ OFF CACHE BOOL "" FORCE)
+  set(USERVER_FEATURE_REDIS_HI_MALLOC ON CACHE BOOL "" FORCE)
 
-    if (EXISTS third_party/userver)
-        message(STATUS "Using userver framework from third_party/userver")
-        add_subdirectory(third_party/userver)
-    else()
-        message(FATAL_ERROR "Either install the userver or provide a path to it")
-    endif()
+  if(EXISTS third_party/userver)
+    message(STATUS "Using userver framework from third_party/userver")
+    add_subdirectory(third_party/userver)
+  else()
+    message(FATAL_ERROR "Either install the userver or provide a path to it")
+  endif()
 endif()
 
 userver_setup_environment()
 
 # Common sources
 add_library(${PROJECT_NAME}_objs OBJECT
-        src/constants.hpp
+  src/constants.hpp
 
-        src/models/user_dto.hpp
-        src/models/exception.hpp
+  src/helpers/datetime_helper.hpp
+  src/helpers/datetime_helper.cpp
+  src/helpers/string_convertible_checker.hpp
 
-        src/repositories/user_repository/user_repository.hpp
-        src/repositories/user_repository/user_repository.cpp
+  src/models/user_dto.hpp
+  src/models/response.hpp
 
-        src/handlers/v1/user/get-by-username/view.hpp
-        src/handlers/v1/user/get-by-username/view.cpp
-        src/handlers/v1/user/create-user/view.hpp
-        src/handlers/v1/user/create-user/view.cpp
+  src/repositories/user_repository/user_repository.hpp
+  src/repositories/user_repository/user_repository.cpp
+  src/repositories/key_repository/key_repository.hpp
+  src/repositories/key_repository/key_repository.cpp
+
+  src/handlers/v1/user/get-by-username/view.hpp
+  src/handlers/v1/user/get-by-username/view.cpp
+  src/handlers/v1/user/create-user/view.hpp
+  src/handlers/v1/user/create-user/view.cpp
+
+  src/handlers/v1/key/create-key/view.hpp
+  src/handlers/v1/key/create-key/view.cpp
+  src/handlers/v1/key/get-by-id/view.hpp
+  src/handlers/v1/key/get-by-id/view.cpp
+  src/handlers/v1/key/get-by-name/view.hpp
+  src/handlers/v1/key/get-by-name/view.cpp
 )
 target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver::postgresql)
 
@@ -110,7 +123,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_objs)
 
 target_include_directories(${PROJECT_NAME}
   PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
