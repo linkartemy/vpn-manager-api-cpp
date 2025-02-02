@@ -1,69 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
 project(vpn_manager CXX)
 
-# set(CMAKE_CXX_STANDARD 17)
-# set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# set(USERVER_FEATURE_POSTGRESQL ON CACHE BOOL "" FORCE)
-# set(USERVER_FEATURE_CRYPTOPP_BLAKE2 OFF CACHE BOOL "" FORCE)
-# set(USERVER_FEATURE_GRPC_CHANNELZ OFF CACHE BOOL "" FORCE)
-# set(USERVER_FEATURE_REDIS_HI_MALLOC ON CACHE BOOL "" FORCE)
-
-# # Добавляем userver как поддиректорию
-# if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/third_party/userver")
-#     message(STATUS "Using userver framework from third_party/userver")
-#     add_subdirectory(third_party/userver)
-# else()
-#     message(FATAL_ERROR "userver submodule is missing. Make sure to initialize it with `git submodule update --init --recursive`.")
-# endif()
-
-# userver_setup_environment()
-
-# add_library(${PROJECT_NAME}_objs OBJECT
-#     src/constants.hpp
-
-#     src/models/user_dto.hpp
-#     src/models/exception.hpp
-
-#     src/repositories/user_repository/user_repository.hpp
-#     src/repositories/user_repository/user_repository.cpp
-
-#     src/handlers/v1/user/get-by-username/view.hpp
-#     src/handlers/v1/user/get-by-username/view.cpp
-# )
-
-# target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver-core userver-postgresql)
-
-# # Основной исполняемый файл
-# add_executable(${PROJECT_NAME} src/main.cpp)
-# target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_objs)
-
-# # Поддержка тестов (если требуется)
-# userver_testsuite_add_simple()
-
-# # Тестовый исполняемый файл
-# add_executable(${PROJECT_NAME}_unittest)
-# target_link_libraries(${PROJECT_NAME}_unittest PRIVATE ${PROJECT_NAME}_objs userver::utest)
-# add_google_tests(${PROJECT_NAME}_unittest)
-
-# # Установка
-# include(GNUInstallDirs)
-
-# if(DEFINED ENV{PREFIX})
-#     message(STATUS "Set install prefix: $ENV{PREFIX}")
-#     file(TO_CMAKE_PATH "$ENV{PREFIX}" PREFIX_PATH)
-#     set(CMAKE_INSTALL_PREFIX ${PREFIX_PATH})
-# endif()
-
-# # Установить конфигурационные файлы
-# file(GLOB CONFIGS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/configs/*.yaml ${CMAKE_CURRENT_SOURCE_DIR}/configs/*.json)
-# install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${PROJECT_NAME})
-# install(FILES ${CONFIGS_FILES} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/${PROJECT_NAME} COMPONENT ${PROJECT_NAME})
-
-
-
-
-# OLD
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Adding userver dependency
 find_package(userver COMPONENTS core postgresql REQUIRED)
@@ -85,6 +24,22 @@ if(NOT userver_FOUND) # Fallback to subdirectory usage
 endif()
 
 userver_setup_environment()
+
+include(FetchContent)
+
+FetchContent_Declare(
+  nlohmann_json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG v3.11.3
+)
+FetchContent_Declare(
+  jwt-cpp
+  GIT_REPOSITORY https://github.com/Thalhammer/jwt-cpp.git
+  GIT_TAG v0.7.0
+)
+
+FetchContent_MakeAvailable(nlohmann_json)
+FetchContent_MakeAvailable(jwt-cpp)
 
 # Common sources
 add_library(${PROJECT_NAME}_objs OBJECT
@@ -123,7 +78,11 @@ target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver::postgresql)
 
 # The Service
 add_executable(${PROJECT_NAME} src/main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_objs)
+target_link_libraries(${PROJECT_NAME} PRIVATE
+  ${PROJECT_NAME}_objs
+  nlohmann_json::nlohmann_json
+  jwt-cpp
+)
 
 target_include_directories(${PROJECT_NAME}
   PRIVATE
