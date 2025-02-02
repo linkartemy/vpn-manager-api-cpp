@@ -51,6 +51,7 @@ add_library(${PROJECT_NAME}_objs OBJECT
   src/helpers/phone_helper.cpp
   src/helpers/datetime_helper.hpp
   src/helpers/datetime_helper.cpp
+  src/helpers/jwt_helper.hpp
   src/helpers/string_convertible_checker.hpp
 
   src/models/user_dto.hpp
@@ -73,16 +74,13 @@ add_library(${PROJECT_NAME}_objs OBJECT
   src/handlers/v1/key/get-by-name/view.hpp
   src/handlers/v1/key/get-by-name/view.cpp
 )
-target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver::postgresql)
+
+target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver::postgresql nlohmann_json::nlohmann_json jwt-cpp)
 
 
 # The Service
 add_executable(${PROJECT_NAME} src/main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE
-  ${PROJECT_NAME}_objs
-  nlohmann_json::nlohmann_json
-  jwt-cpp
-)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_objs)
 
 target_include_directories(${PROJECT_NAME}
   PRIVATE

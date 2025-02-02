@@ -77,6 +77,13 @@ components_manager:
             path: /v1/keys/get-key-by-name
             method: POST
             task_processor: main-task-processor
+        
+        jwt-middleware: 
+            jwt-secret: "your_secret_here"
+            issuer: "my_issuer"
+        default-server-middleware-pipeline-builder:
+            append:
+              - jwt-middleware
 
         postgres-db-1:
             dbconnection: $dbconnection

@@ -16,6 +16,8 @@
 #include "repositories/key_repository/key_repository.hpp"
 #include "repositories/user_repository/user_repository.hpp"
 
+#include "middlewares/http_middleware.hpp"
+
 #include "third_party/userver/core/include/userver/clients/dns/component.hpp"
 #include "third_party/userver/core/include/userver/dynamic_config/client/component.hpp"
 #include "third_party/userver/core/include/userver/dynamic_config/updater/component.hpp"
@@ -33,6 +35,12 @@ int main(int argc, char* argv[]) {
           .Append<userver::server::handlers::TestsControl>()
           .Append<userver::components::HttpClient>()
           .Append<userver::clients::dns::Component>()
+          .Append<vpn_manager::http_middlewares::CustomHandlerPipelineBuilder>(
+              vpn_manager::constants::http_middlewares::
+                  kCustomHandlerPipelineBuilder)
+        //   .Append<vpn_manager::http_middlewares::SomeServerMiddlewareFactory>()
+          .Append<vpn_manager::http_middlewares::SomeHandlerMiddlewareFactory>()
+
           .Append<vpn_manager::repositories::UserRepositoryComponent>()
           .Append<vpn_manager::repositories::KeyRepositoryComponent>();
 
